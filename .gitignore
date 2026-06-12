@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.pyc
+
+# Generated contest state
+current_contest.txt
+current_contest.json
+
+# Compiled C++ files
+*.exe
+*.o
+*.out
+
+# PyInstaller
+build/
+dist/
+*.spec
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# VS Code
+.vscode/
+
+# Shortcuts
+*.lnk

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    width:320px;
+    background:#0f172a;
+    color:white;
+    font-family:'Segoe UI',sans-serif;
+    padding:16px;
+}
+
+.header{
+    text-align:center;
+    margin-bottom:15px;
+}
+
+.title{
+    font-size:22px;
+    font-weight:700;
+}
+
+.subtitle{
+    color:#94a3b8;
+    font-size:12px;
+    margin-top:2px;
+}
+
+.status{
+    margin-top:12px;
+    padding:10px;
+    border-radius:10px;
+    text-align:center;
+    font-weight:600;
+    background:#1e293b;
+}
+
+.online{
+    background:#064e3b;
+    color:#6ee7b7;
+}
+
+.offline{
+    background:#7f1d1d;
+    color:#fca5a5;
+}
+
+.section{
+    margin-top:16px;
+}
+
+.section-title{
+    color:#94a3b8;
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    margin-bottom:8px;
+}
+
+button{
+
+    width:100%;
+    height:44px;
+
+    border:none;
+    border-radius:10px;
+
+    margin-top:8px;
+
+    cursor:pointer;
+
+    font-size:14px;
+    font-weight:600;
+
+    transition:0.15s;
+}
+
+button:hover{
+    transform:translateY(-1px);
+}
+
+.primary{
+    background:#2563eb;
+    color:white;
+}
+
+.primary:hover{
+    background:#3b82f6;
+}
+
+.secondary{
+    background:#1e293b;
+    color:white;
+}
+
+.secondary:hover{
+    background:#334155;
+}
+
+.footer{
+    text-align:center;
+    color:#64748b;
+    font-size:11px;
+    margin-top:18px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="header">
+    <div class="title">CF Toolkit</div>
+    <div class="subtitle">
+        Competitive Programming Workspace
+    </div>
+</div>
+
+<div
+    id="serverStatus"
+    class="status offline"
+>
+    Checking...
+</div>
+
+<div class="section">
+
+    <div class="section-title">
+        Contest Setup
+    </div>
+
+    <button
+        class="primary"
+        id="practiceContest"
+    >
+        Start Contest Env
+    </button>
+
+</div>
+
+<div class="section">
+
+    <div class="section-title">
+        Problems
+    </div>
+
+    <button
+        class="secondary"
+        id="ad"
+    >
+        Open A-D
+    </button>
+
+    <button
+        class="secondary"
+        id="af"
+    >
+        Open A-F
+    </button>
+
+    <button
+        class="secondary"
+        id="all"
+    >
+        Open All Problems
+    </button>
+
+</div>
+
+<div class="footer">
+    Built by Henil
+</div>
+
+<script src="popup.js"></script>
+
+</body>
+</html>
