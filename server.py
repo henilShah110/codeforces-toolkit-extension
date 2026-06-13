@@ -89,6 +89,7 @@ def start_contest():
         json.dump(
             {
                 "contest": name,
+                "contestId": data["contestId"],
                 "type": data["contestType"],
                 "letters": sorted(
                     set(
@@ -216,6 +217,9 @@ def contest_progress():
             "success": False
         }
 
+    contest_id = int(
+        contest_data["contestId"]
+    )
     letters = contest_data["letters"]
 
     try:
@@ -241,6 +245,13 @@ def contest_progress():
         for submission in submissions:
 
             problem = submission["problem"]
+
+            submission_contest_id = problem.get(
+                "contestId"
+            )
+
+            if submission_contest_id != contest_id:
+                continue
 
             if "index" not in problem:
                 continue

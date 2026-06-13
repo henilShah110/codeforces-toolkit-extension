@@ -40,11 +40,32 @@ chrome.runtime.onMessage.addListener((request)=>{
 
         });
 
+        const contestMatch =
+            window.location.pathname.match(
+                /contest\/(\d+)/
+            );
+
+        const contestId =
+            contestMatch
+            ? contestMatch[1]
+            : null;
+
+
+        console.log("SENDING:");
+        console.log({
+            contestType: request.action,
+            title: document.title,
+            urls: unique,
+            letters: letters,
+            contestId: contestId
+        });
+
         chrome.runtime.sendMessage({
             contestType: request.action,
             title: document.title,
             urls: unique,
-            letters: letters
+            letters: letters,
+            contestId: contestId
         });
 
         return;
@@ -63,7 +84,8 @@ chrome.runtime.onMessage.addListener((request)=>{
     }
 
     chrome.runtime.sendMessage({
-        openTabs:result
+        openTabs:result,
+        contestTitle: document.title
     });
 
 });
