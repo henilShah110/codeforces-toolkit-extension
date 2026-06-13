@@ -315,9 +315,11 @@ function injectCFToolkit() {
                             </div>
 
                             <table style="
-                                width:100%;
+                                width:97%;
                                 border-collapse:collapse;
                                 margin-bottom:10px;
+                                margin-left:4px;
+                                margin-right:4px;
                             ">
                                 <tr>
                                     <th style="
@@ -457,7 +459,154 @@ function showCFResult(content, isHTML=false){
     }
 }
 
-setTimeout(
-    injectCFToolkit,
-    1000
-);
+async function updateContestProgress(){
+
+    try{
+
+        const response =
+            await fetch(
+                "http://127.0.0.1:5000/contestProgress"
+            );
+
+        const data =
+            await response.json();
+
+        if(!data.success){
+            return;
+        }
+
+        let panel =
+            document.getElementById(
+                "cf-progress-panel"
+            );
+
+        if(!panel){
+
+            panel =
+                document.createElement(
+                    "div"
+                );
+
+            panel.id =
+                "cf-progress-panel";
+
+            panel.style.marginTop =
+                "8px";
+
+            const contestBox =
+                document.querySelector(
+                    ".roundbox.sidebox"
+                );
+
+            contestBox.appendChild(
+                panel
+            );
+        }
+
+        let html = `
+            <div style="
+                font-weight:bold;
+                margin-bottom:5px;
+                margin-left:4px;
+                margin-right:4px;
+                font-size:11px;
+            ">
+                Contest Progress
+            </div>
+
+            <table style="
+                width:97%;
+                border-collapse:collapse;
+                font-size:10px;
+                margin-left:4px;
+                margin-right:4px;
+            ">
+        `;
+
+        for(const [problem,status]
+            of Object.entries(
+                data.progress
+            )){
+
+            let color =
+                "#b6b6b6";
+
+            if(
+                status ===
+                "Accepted"
+            ){
+
+                color =
+                    "#53ff98";
+            }
+
+            else if(
+                status ===
+                "Wrong"
+            ){
+
+                color =
+                    "#ff6e6e";
+            }
+
+            else if(
+                status ===
+                "In Queue"
+            ){
+
+                color =
+                    "#ffbd71";
+            }
+
+            html += `
+                <tr style="
+                    background:${color};
+                ">
+                    <td style="
+                        border:1px solid black;
+                        padding:4px;
+                        font-weight:bold;
+                    ">
+                        ${problem}
+                    </td>
+
+                    <td style="
+                        border:1px solid black;
+                        padding:4px;
+                    ">
+                        ${status}
+                    </td>
+                </tr>
+            `;
+        }
+
+        html += `
+            </table>
+        `;
+
+        panel.innerHTML =
+            html;
+
+    }
+    catch(error){
+
+        console.log(
+            error
+        );
+
+    }
+
+}
+
+setTimeout(()=>{
+
+    injectCFToolkit();
+
+    updateContestProgress();
+
+    setInterval(
+        updateContestProgress,
+        30000
+    );
+
+},1000);

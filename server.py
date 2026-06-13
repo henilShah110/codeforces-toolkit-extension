@@ -4,6 +4,8 @@ import os
 import re
 import subprocess
 import json
+import requests
+
 
 app = Flask(__name__)
 CORS(app)
@@ -57,22 +59,10 @@ def get_current_contest():
 
         with open(
             "current_contest.json",
-            "w"
+            "r"
         ) as f:
 
-            json.dump(
-                {
-                    "contest": name,
-                    "type": data["contestType"],
-                    "letters": sorted(
-                        set(
-                            data["letters"]
-                        )
-                    )
-                },
-                f,
-                indent=4
-            )
+            return json.load(f)
 
     except:
 
@@ -92,11 +82,23 @@ def start_contest():
 
     # Save current contest
     with open(
-        "current_contest.txt",
+        "current_contest.json",
         "w"
     ) as f:
 
-        f.write(name)
+        json.dump(
+            {
+                "contest": name,
+                "type": data["contestType"],
+                "letters": sorted(
+                    set(
+                        data["letters"]
+                    )
+                )
+            },
+            f,
+            indent=4
+        )
 
     base = PRACTICE_DIR
 
@@ -184,21 +186,115 @@ def status():
         "status": "online"
     }
 
+@app.route("/contestInfo")
+def contest_info():
+
+    contest_data = get_current_contest()
+
+    if contest_data is None:
+
+        return {
+            "success": False
+        }
+
+    return {
+        "success": True,
+        "contest": contest_data["contest"],
+        "type": contest_data["type"],
+        "letters": contest_data["letters"]
+    }
+
+
+@app.route("/contestProgress")
+def contest_progress():
+
+    contest_data = get_current_contest()
+
+    if contest_data is None:
+
+        return {
+            "success": False
+        }
+
+    letters = contest_data["letters"]
+
+    try:
+
+        response = requests.get(
+            "https://codeforces.com/api/user.status",
+            params={
+                "handle":"shadowman11",
+                "from":1,
+                "count":100
+            },
+            timeout=10
+        )
+
+        submissions = response.json()["result"]
+
+        progress = {}
+
+        for letter in letters:
+
+            progress[letter] = "-"
+
+        for submission in submissions:
+
+            problem = submission["problem"]
+
+            if "index" not in problem:
+                continue
+
+            index = problem["index"]
+
+            if index not in progress:
+                continue
+
+            verdict = submission.get(
+                "verdict"
+            )
+
+            if verdict == "OK":
+
+                progress[index] = "Accepted"
+
+            elif progress[index] != "Accepted":
+
+                if verdict is None:
+
+                    progress[index] = "In Queue"
+
+                else:
+
+                    progress[index] = "Wrong"
+
+        return {
+            "success": True,
+            "progress": progress
+        }
+
+    except Exception as e:
+
+        return {
+            "success": False,
+            "error": str(e)
+        }
 
 @app.route("/testProblem", methods=["POST"])
 def test_problem():
 
     data = request.json
 
-    contest = get_current_contest()
+    contest_data = get_current_contest()
 
-    if contest is None:
+    if contest_data is None:
 
         return {
             "success": False,
             "message": "No contest selected."
         }
 
+    contest = contest_data["contest"]
     problem = data["problem"]
 
     contest_dir = os.path.join(
